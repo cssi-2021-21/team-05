@@ -9,7 +9,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <link href="https://doc.mh-s.de/bulma-calendar/assets/css/bulma-calendar.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="css/writeNote.css">
+    
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
@@ -75,6 +78,7 @@
                                 <textarea class="textarea is-medium" id="noteText"></textarea>
                             </div>
                         </div>
+                        <input class="input bulmaCalendar" type="date" />
                         <div class="control">
                             <button id="createNoteButton"
                                 class="button is-link is-fullwidth has-text-weight-medium is-medium">Create
@@ -87,6 +91,7 @@
         </div>
     </section>
 
+    <script src="https://doc.mh-s.de/bulma-calendar/assets/js/bulma-calendar.min.js"></script>
     <script src="js/writeNote.js"></script>
 
 </body>
