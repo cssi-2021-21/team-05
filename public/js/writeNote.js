@@ -22,9 +22,6 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
 });
 
 document.querySelector("#createNoteButton").addEventListener("click", () => {
-    console.log('hhh')
-    console.log(selectedDate.toString());
-    console.log('jjj')
     const payload = {
         title: document.querySelector("#noteTitle").value,
         text: document.querySelector("#noteText").value,
