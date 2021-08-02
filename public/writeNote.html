@@ -12,7 +12,7 @@
     <link href="https://doc.mh-s.de/bulma-calendar/assets/css/bulma-calendar.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="css/writeNote.css">
-    
+
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
@@ -47,49 +47,51 @@
         </div>
     </nav>
 
-    <section class="hero is-fullheight">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <div class="columns is-8 is-variable ">
+    <!--section class="hero is-fullheight">
+        <div class="hero-body"-->
+    <div class="container has-text-centered">
+        <div class="columns is-8 is-variable ">
 
-                    <!-- WELCOME HERO -->
-                    <div class="column is-two-thirds has-text-left">
-                        <h1 id="helloTitle" class="title is-1">https://www.youtube.com/watch?v=dQw4w9WgXcQ</h1>
-                        <h1 class="title is-1">What's on your mind?</h1>
-                        <h1 class="title is-3">
-                            “The most beautiful things are those that madness prompts and reason writes."
-                        </h1>
-                        <h1 class="subtitle is-5">
-                            —Andre Gide
-                        </h1>
-                    </div>
-
-                    <!-- NOTE FORM -->
-                    <div class="column is-one-third has-text-left">
-                        <div class="field">
-                            <label class="label">Title</label>
-                            <div class="control">
-                                <input class="input is-medium" type="text" id="noteTitle">
-                            </div>
-                        </div>
-                        <div class="field">
-                            <label class="label">Note</label>
-                            <div class="control">
-                                <textarea class="textarea is-medium" id="noteText"></textarea>
-                            </div>
-                        </div>
-                        <input class="input bulmaCalendar" type="date" />
-                        <div class="control">
-                            <button id="createNoteButton"
-                                class="button is-link is-fullwidth has-text-weight-medium is-medium">Create
-                                Note</button>
-                        </div>
-                    </div>
-
-                </div>
+            <!-- WELCOME HERO -->
+            <div class="column is-one-quarter has-text-left">
+                <h1 id="helloTitle" class="title is-1">https://www.youtube.com/watch?v=dQw4w9WgXcQ</h1>
+                <h1 class="title is-1">What's on your mind?</h1>
+                <h1 class="title is-3">
+                    “The most beautiful things are those that madness prompts and reason writes."
+                </h1>
+                <h1 class="subtitle is-5">
+                    —Andre Gide
+                </h1>
             </div>
+
+            <!-- NOTE FORM -->
+            <div class="column is-three-quarters has-text-left">
+                <div class="title">Reminders</div>
+                <table class="table is-fullwidth">
+                    <tbody>
+                        <tr>
+                            <td>Test Element</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="inputCardToggle" class="button is-danger is-light">Add</button>
+                                <div id="inputCard" class="card is-hidden">
+                                    <div class="card-content">
+                                        <input class="input is-normal" type="text" placeholder="Title">
+                                        <textarea class="textarea is-small" placeholder="Notes" rows="1"></textarea>
+                                        <input class="input is-small" type="text" placeholder="Tags">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
-    </section>
+    </div>
+    <!--/div>
+    </section-->
 
     <script src="https://doc.mh-s.de/bulma-calendar/assets/js/bulma-calendar.min.js"></script>
     <script src="js/writeNote.js"></script>
