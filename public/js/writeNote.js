@@ -21,22 +21,24 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
     });
 });
 
-/*
-document.querySelector("#createNoteButton").addEventListener("click", () => {
+document.querySelector("#submitButton").addEventListener("click", () => {
     const payload = {
-        title: document.querySelector("#noteTitle").value,
-        text: document.querySelector("#noteText").value,
+        title: document.querySelector("#itemTitle").value,
+        text: document.querySelector("#itemDetails").value,
+        tags: document.querySelector("#itemTags").value.split(" "),
         due: selectedDate.toString(),
         created: new Date(Date.now()).toString()
     }
+
     firebase.database().ref(`/users/${googleUser.uid}`).push(payload).then(() => {
         alert("Note Submitted.");
-        document.querySelector("#noteTitle").value = "";
-        document.querySelector("#noteText").value = "";
+        document.querySelector("#itemTitle").value = "";
+        document.querySelector("#itemDetails").value = "";
+        document.querySelector("#itemTags").value = "";
     }).catch(error => {
         console.log("error writing new note: ", error);
     })
-});*/
+});
 
 {
     function toggleInputCard(){
