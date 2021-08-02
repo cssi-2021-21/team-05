@@ -21,6 +21,7 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
     });
 });
 
+/*
 document.querySelector("#createNoteButton").addEventListener("click", () => {
     const payload = {
         title: document.querySelector("#noteTitle").value,
@@ -35,4 +36,16 @@ document.querySelector("#createNoteButton").addEventListener("click", () => {
     }).catch(error => {
         console.log("error writing new note: ", error);
     })
-});
+});*/
+
+{
+    function toggleInputCard(){
+        document.querySelector("#inputCard").classList.toggle("is-hidden");
+        document.querySelector("#inputCardToggle").classList.toggle("is-hidden");
+    }
+
+    document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard());
+    document.querySelector("#cancelButton").addEventListener("click", () => toggleInputCard());
+}
+
+

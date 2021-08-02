@@ -71,12 +71,16 @@
                         <tr>
                             <td>
                                 <button id="inputCardToggle" class="button is-danger is-light">Add</button>
-                                <div id="inputCard" class="card">
+                                <div id="inputCard" class="card is-hidden">
                                     <div class="card-content">
-                                        <input class="input is-normal" type="text" placeholder="Title" />
+                                        <input class="input is-normal" type="text" placeholder="Title">
                                         <textarea class="textarea is-small" placeholder="Notes" rows="1"></textarea>
-                                        <input class="input is-small" type="text" placeholder="Tags" />
-                                        <input class="input bulmaCalendar" type="date" />
+                                        <input class="input is-small" type="text" placeholder="Tags">
+                                        <input class="input bulmaCalendar" type="date">
+                                        <div class="buttons are-small">
+                                            <button id="submitButton" class="button is-danger is-light">Add item</button>
+                                            <button id="cancelButton" class="button">Cancel</button>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
