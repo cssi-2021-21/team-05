@@ -1,9 +1,11 @@
 let prevHandler = window.onload;
+let selectedDate = new Date(Date.now());
+
 window.onload = () => {
     if (prevHandler) {
         prevHandler();
     }
-    
+
     const start = new Date(Date.now() -  24 * 60 * 60 * 1000);
     const end   = new Date(Date.now() +  24 * 60 * 60 * 1000);
 
@@ -14,7 +16,7 @@ window.onload = () => {
         calendar.value(start);
 
         calendar.on('save', function(datepicker) {
-            console.log(datepicker.data.value());
+            selectedDate = new Date(datepicker.data.value());
         });
 
     });
