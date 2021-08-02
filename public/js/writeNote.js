@@ -5,7 +5,7 @@ window.onload = () => {
         if (user) {
             googleUser = user;
             console.log(googleUser);
-            document.querySelector("#helloTitle").innerHTML = `Hello, ${googleUser.displayName ? googleUser.displayName : googleUser.email.split('@')[0]}!`
+            //document.querySelector("#helloTitle").innerHTML = `Hello, ${googleUser.displayName ? googleUser.displayName : googleUser.email.split('@')[0]}!`
         } else {
             document.querySelector(".hero").innerHTML = "You are not logged in.";
         }
@@ -29,8 +29,8 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
     document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard());
     document.querySelector("#cancelButton").addEventListener("click", () => toggleInputCard());
 
-    document.querySelector("#titleInput").addEventListener("input", () =>
-        document.querySelector("#submitButton").disabled = (document.querySelector("#titleInput").value == false));
+    document.querySelector("#itemTitle").addEventListener("input", () =>
+        document.querySelector("#submitButton").disabled = (document.querySelector("#itemTitle").value == false));
 
     document.querySelector("#submitButton").addEventListener("click", () => {
         const payload = {
