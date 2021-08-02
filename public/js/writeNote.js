@@ -19,7 +19,7 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
     }).catch((error) => {
         alert(error);
     });
-})
+});
 
 document.querySelector("#createNoteButton").addEventListener("click", () => {
     console.log('hhh')
