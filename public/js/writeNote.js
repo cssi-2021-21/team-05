@@ -21,7 +21,6 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
     });
 });
 
-
 /*
 document.querySelector("#createNoteButton").addEventListener("click", () => {
     console.log('hhh')
