@@ -42,13 +42,16 @@ document.querySelector("#createNoteButton").addEventListener("click", () => {
 });*/
 
 {
-    function toggleInputCard(){
+    function toggleInputCard() {
         document.querySelector("#inputCard").classList.toggle("is-hidden");
         document.querySelector("#inputCardToggle").classList.toggle("is-hidden");
     }
 
     document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard());
     document.querySelector("#cancelButton").addEventListener("click", () => toggleInputCard());
+
+    document.querySelector("#titleInput").addEventListener("input", () =>
+        document.querySelector("#submitButton").disabled = (document.querySelector("#titleInput").value == false));
 }
 
 
