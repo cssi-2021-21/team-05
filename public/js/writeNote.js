@@ -1,6 +1,7 @@
 let googleUser = null;
 
 window.onload = () => {
+    console.log('hello');
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             googleUser = user;
@@ -9,53 +10,6 @@ window.onload = () => {
         } else {
             document.querySelector(".hero").innerHTML = "You are not logged in.";
         }
-    });
-
-    const start = new Date(Date.now() -  24 * 60 * 60 * 1000);
-    const end   = new Date(Date.now() +  24 * 60 * 60 * 1000);
-
-    const calendars = bulmaCalendar.attach('.bulmaCalendar');
-
-    calendars.forEach(calendar => {
-
-        calendar.value(start);
-
-        calendar.on('save', function(datepicker) {
-            console.log(datepicker.data.value());
-        });
-
-    });
-
-    bulmaCalendar.attach('.bulmaCalendarRange', {
-        isRange:   true,
-        startDate: start,
-        endDate:   end
-    });
-
-    bulmaCalendar.attach('.bulmaCalendarRangeLabels', {
-        isRange:   true,
-        labelFrom: 'Check-in',
-        labelTo:   'Check-out'
-    });
-
-    bulmaCalendar.attach('#datepickerDemoDisabledDates', {
-        displayMode:   'dialog',
-        disabledDates: [start, end]
-    });
-
-    bulmaCalendar.attach('#datepickerDemoDisabledWeekDays', {
-        displayMode:      'dialog',
-        disabledWeekDays: '0,6'
-    });
-
-    bulmaCalendar.attach('#datepickerDemoHighlightedDates', {
-        displayMode:      'dialog',
-        highlightedDates: [start, end]
-    });
-
-    bulmaCalendar.attach('#datepickerDemoWeekStart', {
-        displayMode: 'dialog',
-        weekStart:   1
     });
 }
 
@@ -68,10 +22,14 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
 })
 
 document.querySelector("#createNoteButton").addEventListener("click", () => {
+    console.log('hhh')
+    console.log(selectedDate.toString());
+    console.log('jjj')
     const payload = {
         title: document.querySelector("#noteTitle").value,
         text: document.querySelector("#noteText").value,
-        created: new Date().getTime()
+        due: selectedDate.toString(),
+        created: new Date(Date.now()).toString()
     }
     firebase.database().ref(`/users/${googleUser.uid}`).push(payload).then(() => {
         alert("Note Submitted.");
