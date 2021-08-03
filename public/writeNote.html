@@ -8,6 +8,7 @@
       <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
       <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
       <link href="https://doc.mh-s.de/bulma-calendar/assets/css/bulma-calendar.min.css" rel="stylesheet">
+      <link href="stylesheets/bulma-checkradio.min.css" rel="stylesheet">
       <link rel="stylesheet" href="css/writeNote.css">
       <!-- update the version number as needed -->
       <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
@@ -60,7 +61,8 @@
                     <tfoot>
                         <tr>
                             <td>
-                            <button id="inputCardToggle" class="button is-danger is-light">Add</button>
+                            <button id="inputCardToggle" class="button is-danger is-light">Add item</button>
+                            <button id="showCompleteToggle" class="button is-danger is-light">Show completed</button>
                             <div id="inputCard" class="card is-hidden">
                                 <div class="card-content">
                                     <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
