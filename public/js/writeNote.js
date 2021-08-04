@@ -38,7 +38,8 @@ document.querySelector("#submitButton").addEventListener("click", () => {
         title: document.querySelector("#itemTitle").value,
         text: document.querySelector("#itemDetails").value,
         tags: tags.filter((c, index) => {
-            return tags.indexOf(c) === index}).filter(Boolean),
+            return tags.indexOf(c) === index
+        }).filter(Boolean),
         due: selectedDate.getTime(),
         created: new Date(Date.now()).getTime(),
         complete: false
@@ -94,15 +95,36 @@ const renderDataAsHtml = (data) => {
 }
 
 const editTags = (itemId, tags) => {
-    console.log(itemId, tags);
     document.querySelector(`#${itemId}-tags`).classList.add("is-hidden");
     const tagsInput = document.querySelector(`#${itemId}-tagsInput`);
     tagsInput.classList.remove("is-hidden");
     tagsInput.addEventListener("change", () => {
         const newTags = tagsInput.value.split(" ");
-        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ tags: newTags.filter((c, index) => {
-            return newTags.indexOf(c) === index}).filter(Boolean) });
+        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({
+            tags: newTags.filter((c, index) => {
+                return newTags.indexOf(c) === index
+            }).filter(Boolean)
+        });
     })
+}
+
+const editText = (itemId, title, text) => {
+    let titleInput = document.querySelector(`#${itemId}-title`);
+    let textInput = document.querySelector(`#${itemId}-text`);
+    titleInput.outerHTML = `<input id="${itemId}-title" class="input is-normal" type="text" value="${title}">`
+    textInput.outerHTML = `<input id="${itemId}-text" class="textarea is-small" type="text" value="${text}">`
+    titleInput = document.querySelector(`#${itemId}-title`);
+    textInput = document.querySelector(`#${itemId}-text`);
+
+    titleInput.addEventListener("change", () => {
+        const newTitle = titleInput.value;
+        if(!newTitle) firebase.database().ref(`users/${googleUser.uid}/${itemId}`).remove();
+        else firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ title: newTitle });
+    });
+
+    textInput.addEventListener("change", () => {
+        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ text: textInput.value });
+    });
 }
 
 const createCard = (item, itemId) => {
@@ -112,7 +134,7 @@ const createCard = (item, itemId) => {
     <div class="tags" id="${itemId}-tags">
     `;
 
-    for(let tag in item.tags){
+    for (let tag in item.tags) {
         tagHTML += `<span class="tag is-primary" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">${item.tags[tag]}</span>`
     }
 
@@ -129,10 +151,10 @@ const createCard = (item, itemId) => {
                     </div>
                 </div>
                 <div class="column has-text-left">
-                    <div class="title is-4">
+                    <div id="${itemId}-title" class="title is-4" onclick="editText('${itemId}', '${item.title}', \`${item.text}\`)">
                         ${item.title}
                     </div>
-                    <div class="subtitle is-6">
+                    <div id="${itemId}-text" class="subtitle is-6" onclick="editText('${itemId}', '${item.title}', \`${item.text}\`)">
                         ${item.text}
                     </div>
                     ${tagHTML}
@@ -154,12 +176,12 @@ const toggleCompleteItem = (itemId, isComplete) => {
     });
     gapi.client.tasks.tasklists.list().then(res => {
         const taskListID = res.result.items[0].id;
-        
+
         gapi.client.tasks.tasks.patch({
             'tasklist': taskListID,
             "task": googleCalendarId,
             'resource': {
-                'status': isComplete ?  'needsAction' : 'completed',
+                'status': isComplete ? 'needsAction' : 'completed',
             }
         }).then(res => console.log('RRRR', res));
     });
