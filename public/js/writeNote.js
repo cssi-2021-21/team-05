@@ -109,11 +109,11 @@ const createCard = (item, itemId) => {
 
     let tagHTML = `
     <input id="${itemId}-tagsInput" class="input is-small is-primary is-hidden" type="text" value="${item.tags.join(" ")}"> </input>
-    <div class="tags" id="${itemId}-tags" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">
+    <div class="tags" id="${itemId}-tags">
     `;
 
     for(let tag in item.tags){
-        tagHTML += `<span class="tag is-primary">${item.tags[tag]}</span>`
+        tagHTML += `<span class="tag is-primary" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">${item.tags[tag]}</span>`
     }
 
     tagHTML += '</div>'
