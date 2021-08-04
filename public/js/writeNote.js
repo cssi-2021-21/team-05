@@ -68,7 +68,8 @@ const renderDataAsHtml = (data) => {
         if (data[id].complete) {
             document.getElementById(`${id}-checkbox`).setAttribute('checked', 'checked');
             if (!doNotHide) {
-                document.getElementById(`${id}-card`).classList.toggle("is-hidden");
+                console.log(`${id}-card`)
+                document.getElementById(`${id}`).classList.toggle("is-hidden");
             }
         }
     }
