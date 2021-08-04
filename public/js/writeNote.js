@@ -33,7 +33,7 @@ document.querySelector("#itemTitle").addEventListener("input", () => {
 });
 
 document.querySelector("#submitButton").addEventListener("click", () => {
-    const payload = {
+    let payload = {
         title: document.querySelector("#itemTitle").value,
         text: document.querySelector("#itemDetails").value,
         tags: document.querySelector("#itemTags").value.split(" "),
@@ -42,19 +42,36 @@ document.querySelector("#submitButton").addEventListener("click", () => {
         complete: false
     }
 
-    firebase.database().ref(`/users/${googleUser.uid}`).push(payload).then(() => {
-        alert("Note Submitted.");
-        document.querySelector("#itemTitle").value = "";
-        document.querySelector("#itemDetails").value = "";
-        document.querySelector("#itemTags").value = "";
-        toggleInputCard();
-    }).catch(error => {
-        console.log("error writing new note: ", error);
+    gapi.client.tasks.tasklists.list().then(res => {
+        const taskListID = res.result.items[0].id;
+
+        gapi.client.tasks.tasks.insert({
+            'tasklist': taskListID,
+            'resource': {
+                'title': payload.title,
+                'due': ISODateString(new Date(payload.due)),
+                'status': payload.complete ? 'completed' : 'needsAction',
+                'notes': payload.text
+            }
+        }).then(res => {
+            console.log(res.result.id)
+            payload.googleCalendarId = res.result.id;
+            firebase.database().ref(`/users/${googleUser.uid}`).push(payload).then(() => {
+                alert("Note Submitted.");
+                document.querySelector("#itemTitle").value = "";
+                document.querySelector("#itemDetails").value = "";
+                document.querySelector("#itemTags").value = "";
+                toggleInputCard();
+            }).catch(error => {
+                console.log("error writing new note: ", error);
+            });
+        });
     });
+
 });
 
 const getItems = (userId) => {
-    firebase.database().ref(`/users/${userId}`).on('value', (snapshot) => {  // calls it once (on page load here), then whenever the database values change
+    firebase.database().ref(`/users/${userId}`).on('value', (snapshot) => { // calls it once (on page load here), then whenever the database values change
         renderDataAsHtml(snapshot.val());
     });
 }
@@ -68,42 +85,12 @@ const renderDataAsHtml = (data) => {
         if (data[id].complete) {
             document.getElementById(`${id}-checkbox`).setAttribute('checked', 'checked');
             if (!doNotHide) {
-                console.log(`${id}-card`)
                 document.getElementById(`${id}`).classList.toggle("is-hidden");
             }
         }
     }
 
 }
-
-document.querySelector("#testGcalSync").addEventListener("click", () => {
-    firebase.database().ref(`/users/${googleUser.uid}`).get().then((snapshot) => {  // calls it once (on page load here), then whenever the database values change
-        const data = snapshot.val();
-
-        gapi.client.tasks.tasklists.list().then(res => {
-            const taskListID = res.result.items[0].id;
-    
-            gapi.client.tasks.tasks.list({
-                'tasklist': taskListID
-            }).then(response => {
-                console.log(response.result.items);
-            });
-    
-            for (id in data) {
-                    gapi.client.tasks.tasks.insert({
-                        'tasklist': taskListID,
-                        'resource': {
-                            'title': data[id].title,
-                            'due': ISODateString(new Date(data[id].due)),
-                            'status': data[id].complete ? 'completed' : 'needsAction',
-                            'notes': data[id].text
-                        }
-                    }).then();
-            }
-        });
-    });
-});
-
 
 const createCard = (item, itemId) => {
     return `
@@ -131,7 +118,25 @@ const createCard = (item, itemId) => {
 }
 
 const toggleCompleteItem = (itemId, isComplete) => {
-    firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ complete: !isComplete });
+    ref = firebase.database().ref(`users/${googleUser.uid}/${itemId}`);
+    ref.update({
+        complete: !isComplete
+    });
+    let googleCalendarId = null;
+    ref.on('value', (snapshot) => {
+        googleCalendarId = snapshot.val().googleCalendarId;
+    });
+    gapi.client.tasks.tasklists.list().then(res => {
+        const taskListID = res.result.items[0].id;
+        
+        gapi.client.tasks.tasks.patch({
+            'tasklist': taskListID,
+            "task": googleCalendarId,
+            'resource': {
+                'status': isComplete ?  'needsAction' : 'completed',
+            }
+        }).then(res => console.log('RRRR', res));
+    });
     if (isComplete) {
         document.getElementById(`${itemId}-checkbox`).removeAttribute('checked');
     } else {
@@ -173,11 +178,13 @@ function handleClientLoad() {
 }
 
 function ISODateString(d) {
-    function pad(n) { return n < 10 ? '0' + n : n }
-    return d.getUTCFullYear() + '-'
-        + pad(d.getUTCMonth() + 1) + '-'
-        + pad(d.getUTCDate()) + 'T'
-        + pad(d.getUTCHours()) + ':'
-        + pad(d.getUTCMinutes()) + ':'
-        + pad(d.getUTCSeconds()) + 'Z'
+    function pad(n) {
+        return n < 10 ? '0' + n : n
+    }
+    return d.getUTCFullYear() + '-' +
+        pad(d.getUTCMonth() + 1) + '-' +
+        pad(d.getUTCDate()) + 'T' +
+        pad(d.getUTCHours()) + ':' +
+        pad(d.getUTCMinutes()) + ':' +
+        pad(d.getUTCSeconds()) + 'Z'
 }
