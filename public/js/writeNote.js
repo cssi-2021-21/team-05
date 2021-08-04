@@ -109,16 +109,14 @@ const editTags = (itemId, tags) => {
 }
 
 const editText = (itemId, title, text) => {
+    document.querySelector(`#${itemId}-title`).outerHTML = `<input id="${itemId}-title" class="input is-normal" type="text" value="${title}">`
+    document.querySelector(`#${itemId}-text`).outerHTML = `<input id="${itemId}-text" class="textarea is-small" type="text" value="${text}">`
     let titleInput = document.querySelector(`#${itemId}-title`);
     let textInput = document.querySelector(`#${itemId}-text`);
-    titleInput.outerHTML = `<input id="${itemId}-title" class="input is-normal" type="text" value="${title}">`
-    textInput.outerHTML = `<input id="${itemId}-text" class="textarea is-small" type="text" value="${text}">`
-    titleInput = document.querySelector(`#${itemId}-title`);
-    textInput = document.querySelector(`#${itemId}-text`);
 
     titleInput.addEventListener("change", () => {
         const newTitle = titleInput.value;
-        if(!newTitle) firebase.database().ref(`users/${googleUser.uid}/${itemId}`).remove();
+        if (!newTitle) firebase.database().ref(`users/${googleUser.uid}/${itemId}`).remove();
         else firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ title: newTitle });
     });
 
