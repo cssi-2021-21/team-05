@@ -93,6 +93,15 @@ const renderDataAsHtml = (data) => {
 }
 
 const createCard = (item, itemId) => {
+
+    let tagHTML = '<div class = "tags">';
+
+    for(let tag in item.tags){
+        tagHTML += `<span class="tag is-primary">${item.tags[tag]}</span>`
+    }
+
+    tagHTML += '</div>'
+
     return `
     <tr id="${itemId}" class="item-card">
         <td>
@@ -110,6 +119,8 @@ const createCard = (item, itemId) => {
                     <div class="subtitle is-6">
                         ${item.text}
                     </div>
+
+                    ${tagHTML}
                 </div>
             </div>
         </td>
