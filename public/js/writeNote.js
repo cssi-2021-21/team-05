@@ -82,23 +82,23 @@ document.querySelector("#testGcalSync").addEventListener("click", () => {
 
         gapi.client.tasks.tasklists.list().then(res => {
             const taskListID = res.result.items[0].id;
-    
+
             gapi.client.tasks.tasks.list({
                 'tasklist': taskListID
             }).then(response => {
                 console.log(response.result.items);
             });
-    
+
             for (id in data) {
-                    gapi.client.tasks.tasks.insert({
-                        'tasklist': taskListID,
-                        'resource': {
-                            'title': data[id].title,
-                            'due': ISODateString(new Date(data[id].due)),
-                            'status': data[id].complete ? 'completed' : 'needsAction',
-                            'notes': data[id].text
-                        }
-                    }).then();
+                gapi.client.tasks.tasks.insert({
+                    'tasklist': taskListID,
+                    'resource': {
+                        'title': data[id].title,
+                        'due': ISODateString(new Date(data[id].due)),
+                        'status': data[id].complete ? 'completed' : 'needsAction',
+                        'notes': data[id].text
+                    }
+                }).then();
             }
         });
     });
@@ -106,6 +106,15 @@ document.querySelector("#testGcalSync").addEventListener("click", () => {
 
 
 const createCard = (item, itemId) => {
+
+    let tagHTML = '<div class = "tags">';
+
+    for(let tag in item.tags){
+        tagHTML += `<span class="tag is-primary">${item.tags[tag]}</span>`
+    }
+
+    tagHTML += '</div>'
+
     return `
     <tr id="${itemId}" class="item-card">
         <td>
@@ -123,6 +132,8 @@ const createCard = (item, itemId) => {
                     <div class="subtitle is-6">
                         ${item.text}
                     </div>
+
+                    ${tagHTML}
                 </div>
             </div>
         </td>
