@@ -22,7 +22,7 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
 
 function toggleInputCard() {
     document.querySelector("#inputCard").classList.toggle("is-hidden");
-    document.querySelector("#inputCardToggle").classList.toggle("is-hidden");
+    document.querySelector("#inputCardToggle").disabled = !document.querySelector("#inputCardToggle").disabled;
 }
 
 document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard());
