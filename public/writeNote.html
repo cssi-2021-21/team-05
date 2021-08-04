@@ -1,111 +1,129 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Fire Notes</title>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-      <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-      <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
-      <link href="https://doc.mh-s.de/bulma-calendar/assets/css/bulma-calendar.min.css" rel="stylesheet">
-      <link href="stylesheets/bulma-checkradio.min.css" rel="stylesheet">
-      <!-- update the version number as needed -->
-      <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
-      <!-- include only the Firebase features as you need -->
-      <script defer src="/__/firebase/8.3.1/firebase-auth.js"></script>
-      <script defer src="/__/firebase/8.3.1/firebase-database.js"></script>
-      <script defer src="/__/firebase/init.js?useEmulator=true"></script>
-   </head>
-   <body>
-      <nav class="navbar" role="navigation" aria-label="main navigation">
-         <div class="navbar-brand">
-            <a class="navbar-item">
-               <h2 class="title is-2">
-                  🔥Fire Notes📝
-               </h2>
-            </a>
-         </div>
-         <div class="navbar-menu">
-            <a class="navbar-item" href="viewNotes.html">
-            View Your Notes
-            </a>
-            <div class="navbar-end">
-               <div class="navbar-item">
-                  <div class="buttons">
-                     <a id="logoutButton" class="button is-danger">
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>Fire Notes</title>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+   <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+   <link href="https://doc.mh-s.de/bulma-calendar/assets/css/bulma-calendar.min.css" rel="stylesheet">
+   <link href="stylesheets/bulma-checkradio.min.css" rel="stylesheet">
+   <!-- update the version number as needed -->
+   <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
+   <!-- include only the Firebase features as you need -->
+   <script defer src="/__/firebase/8.3.1/firebase-auth.js"></script>
+   <script defer src="/__/firebase/8.3.1/firebase-database.js"></script>
+   <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+   <style>
+      .input,
+      .textarea {
+         box-shadow: none;
+      }
+
+      .input,
+      .select select,
+      .textarea {
+         background-color: #fff;
+         border-color: #fff;
+         border-radius: 0px;
+         color: #363636;
+      }
+   </style>
+</head>
+
+<body>
+   <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+         <a class="navbar-item">
+            <h2 class="title is-2">
+               🔥Fire Notes📝
+            </h2>
+         </a>
+      </div>
+      <div class="navbar-menu">
+         <a class="navbar-item">
+         </a>
+         <div class="navbar-end">
+            <div class="navbar-item">
+               <div class="buttons">
+                  <a id="logoutButton" class="button is-danger">
                      <strong>Sign Out</strong>
-                     </a>
-                  </div>
+                  </a>
                </div>
             </div>
          </div>
-      </nav>
-      <!--section class="hero is-fullheight">
+      </div>
+   </nav>
+   <!--section class="hero is-fullheight">
          <div class="hero-body"-->
-      <div class="container has-text-centered">
-         <div class="columns is-8 is-variable ">
-            <!-- WELCOME HERO -->
-            <div class="column is-one-quarter has-text-left">
-               <h1 class="subtitle is-5">
-                  Sidebar stuff
-                  <button id="testGcalSync">Sync to GCal </button>
-               </h1>
-            </div>
-            <!-- NOTE FORM -->
-            <div class="column is-three-quarters has-text-left">
-               <div class="title">Reminders</div>
-               <table class="table is-fullwidth">
-                    <tbody id="itemTable">
-                        <!-- To do items inserted here -->
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td>
-                            <button id="inputCardToggle" class="button is-danger is-light">Add item</button>
-                            <button id="showCompleteToggle" class="button is-danger is-light">Show completed</button>
-                            <div id="inputCard" class="card is-hidden">
-                                <div class="card-content">
-                                    <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
-                                    <textarea id="itemDetails" class="textarea is-small" placeholder="Details" rows="1"></textarea>
-                                    <input id="itemTags" class="input is-small" type="text" placeholder="Tags (separate with spaces)">
-                                    <input class="input bulmaCalendar" type="date">
-                                    <div class="buttons are-small">
-                                        <button id="submitButton" class="button is-danger is-light" disabled>Add item</button>
-                                        <button id="cancelButton" class="button">Cancel</button>
-                                    </div>
-                                </div>
-                            </div>
-                            </td>
-                        </tr>
-                    </tfoot>
-               </table>
-            </div>
+   <div class="container has-text-centered">
+      <div class="columns is-8 is-variable ">
+         <!-- WELCOME HERO -->
+         <div class="column is-one-quarter has-text-left">
+            <h1 class="subtitle is-5">
+               Sidebar stuff
+               <button id="testGcalSync">Sync to GCal </button>
+            </h1>
+         </div>
+         <!-- NOTE FORM -->
+         <div class="column is-three-quarters has-text-left">
+            <div class="title">Reminders</div>
+            <table class="table is-fullwidth">
+               <tbody id="itemTable">
+                  <!-- To do items inserted here -->
+               </tbody>
+               <tfoot>
+                  <tr>
+                     <td>
+                        <button id="inputCardToggle" class="button is-danger is-light">Add item</button>
+                        <button id="showCompleteToggle" class="button is-danger is-light">Show completed</button>
+                        <div id="inputCard" class="card is-hidden">
+                           <div class="card-content">
+                              <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
+                              <textarea id="itemDetails" class="textarea is-small" placeholder="Details"
+                                 rows="1"></textarea>
+                              <input id="itemTags" class="input is-small" type="text"
+                                 placeholder="Tags (separate with spaces)">
+                              <input class="input bulmaCalendar" type="date">
+                              <div class="buttons are-small">
+                                 <button id="submitButton" class="button is-danger is-light" disabled>Add item</button>
+                                 <button id="cancelButton" class="button">Cancel</button>
+                              </div>
+                           </div>
+                        </div>
+                     </td>
+                  </tr>
+               </tfoot>
+            </table>
          </div>
       </div>
-      <div id="editNoteModal" class="modal">
-         <div class="modal-background"></div>
-         <div class="modal-card">
-            <section class="modal-card-body">
-               Title:
-               <input class="input is-normal" id="editTitleInput" type="text">
-               Text:
-               <input class="input is-normal" id="editTextInput" type="text">
-               <input class="input is-hidden" id="editNoteId" type="text">
-            </section>
-            <footer class="modal-card-foot">
-               <button class="button is-success" onclick="saveEditedNote()">
+   </div>
+   <div id="editNoteModal" class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+         <section class="modal-card-body">
+            Title:
+            <input class="input is-normal" id="editTitleInput" type="text">
+            Text:
+            <input class="input is-normal" id="editTextInput" type="text">
+            <input class="input is-hidden" id="editNoteId" type="text">
+         </section>
+         <footer class="modal-card-foot">
+            <button class="button is-success" onclick="saveEditedNote()">
                Save changes
-               </button>
-               <button class="button" onclick="closedEditModal()">Cancel</button>
-            </footer>
-         </div>
+            </button>
+            <button class="button" onclick="closedEditModal()">Cancel</button>
+         </footer>
       </div>
-      <script src="https://doc.mh-s.de/bulma-calendar/assets/js/bulma-calendar.min.js"></script>
-      <script src="js/writeNote.js"></script>
-      <script src="js/bulmaCalendar.js"></script>
-      <script src="js/apiKeys.js"></script>
-      <script async defer src="https://apis.google.com/js/api.js"
-      onload="this.onload=function(){};handleClientLoad()"
+   </div>
+   <script src="https://doc.mh-s.de/bulma-calendar/assets/js/bulma-calendar.min.js"></script>
+   <script src="js/writeNote.js"></script>
+   <script src="js/bulmaCalendar.js"></script>
+   <script src="js/apiKeys.js"></script>
+   <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
-   </body>
+</body>
+
 </html>
