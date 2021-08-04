@@ -33,10 +33,12 @@ document.querySelector("#itemTitle").addEventListener("input", () => {
 });
 
 document.querySelector("#submitButton").addEventListener("click", () => {
+    const tags = document.querySelector("#itemTags").value.split(" ");
     const payload = {
         title: document.querySelector("#itemTitle").value,
         text: document.querySelector("#itemDetails").value,
-        tags: document.querySelector("#itemTags").value.split(" "),
+        tags: tags.filter((c, index) => {
+            return tags.indexOf(c) === index}).filter(Boolean),
         due: selectedDate.getTime(),
         created: new Date(Date.now()).getTime(),
         complete: false
@@ -73,7 +75,6 @@ const renderDataAsHtml = (data) => {
             }
         }
     }
-
 }
 
 document.querySelector("#testGcalSync").addEventListener("click", () => {
@@ -104,10 +105,24 @@ document.querySelector("#testGcalSync").addEventListener("click", () => {
     });
 });
 
+const editTags = (itemId, tags) => {
+    console.log(itemId, tags);
+    document.querySelector(`#${itemId}-tags`).classList.add("is-hidden");
+    const tagsInput = document.querySelector(`#${itemId}-tagsInput`);
+    tagsInput.classList.remove("is-hidden");
+    tagsInput.addEventListener("change", () => {
+        const newTags = tagsInput.value.split(" ");
+        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ tags: newTags.filter((c, index) => {
+            return newTags.indexOf(c) === index}).filter(Boolean) });
+    })
+}
 
 const createCard = (item, itemId) => {
 
-    let tagHTML = '<div class = "tags">';
+    let tagHTML = `
+    <input id="${itemId}-tagsInput" class="input is-small is-primary is-hidden" type="text" value="${item.tags.join(" ")}"> </input>
+    <div class="tags" id="${itemId}-tags" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">
+    `;
 
     for(let tag in item.tags){
         tagHTML += `<span class="tag is-primary">${item.tags[tag]}</span>`
@@ -132,7 +147,6 @@ const createCard = (item, itemId) => {
                     <div class="subtitle is-6">
                         ${item.text}
                     </div>
-
                     ${tagHTML}
                 </div>
             </div>
