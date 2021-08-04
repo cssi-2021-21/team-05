@@ -48,6 +48,7 @@
             <div class="column is-one-quarter has-text-left">
                <h1 class="subtitle is-5">
                   Sidebar stuff
+                  <button id="testGcalSync">Sync to GCal </button>
                </h1>
             </div>
             <!-- NOTE FORM -->
@@ -102,5 +103,9 @@
       <script src="https://doc.mh-s.de/bulma-calendar/assets/js/bulma-calendar.min.js"></script>
       <script src="js/writeNote.js"></script>
       <script src="js/bulmaCalendar.js"></script>
+      <script src="js/apiKeys.js"></script>
+      <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()"></script>
    </body>
 </html>

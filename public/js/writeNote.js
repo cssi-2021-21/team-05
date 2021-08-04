@@ -3,25 +3,21 @@ let doNotHide = false;
 
 window.onload = () => {
     document.querySelector("#submitButton").disabled = true;
-
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             googleUser = user;
             console.log(googleUser);
             getItems(googleUser.uid);
+
             //document.querySelector("#helloTitle").innerHTML = `Hello, ${googleUser.displayName ? googleUser.displayName : googleUser.email.split('@')[0]}!`
         } else {
-            document.querySelector(".hero").innerHTML = "You are not logged in.";
+            window.location = "index.html";
         }
     });
 }
 
 document.querySelector("#logoutButton").addEventListener("click", () => {
-    firebase.auth().signOut().then(() => {
-        window.location = "index.html";
-    }).catch((error) => {
-        alert(error);
-    });
+    gapi.auth2.getAuthInstance().signOut().then(firebase.auth().signOut());
 });
 
 function toggleInputCard() {
@@ -41,8 +37,8 @@ document.querySelector("#submitButton").addEventListener("click", () => {
         title: document.querySelector("#itemTitle").value,
         text: document.querySelector("#itemDetails").value,
         tags: document.querySelector("#itemTags").value.split(" "),
-        due: selectedDate.toString(),
-        created: new Date(Date.now()).toString(),
+        due: selectedDate.getTime(),
+        created: new Date(Date.now()).getTime(),
         complete: false
     }
 
@@ -76,8 +72,37 @@ const renderDataAsHtml = (data) => {
             }
         }
     }
-    
+
 }
+
+document.querySelector("#testGcalSync").addEventListener("click", () => {
+    firebase.database().ref(`/users/${googleUser.uid}`).get().then((snapshot) => {  // calls it once (on page load here), then whenever the database values change
+        const data = snapshot.val();
+
+        gapi.client.tasks.tasklists.list().then(res => {
+            const taskListID = res.result.items[0].id;
+    
+            gapi.client.tasks.tasks.list({
+                'tasklist': taskListID
+            }).then(response => {
+                console.log(response.result.items);
+            });
+    
+            for (id in data) {
+                    gapi.client.tasks.tasks.insert({
+                        'tasklist': taskListID,
+                        'resource': {
+                            'title': data[id].title,
+                            'due': ISODateString(new Date(data[id].due)),
+                            'status': data[id].complete ? 'completed' : 'needsAction',
+                            'notes': data[id].text
+                        }
+                    }).then();
+            }
+        });
+    });
+});
+
 
 const createCard = (item, itemId) => {
     return `
@@ -105,7 +130,7 @@ const createCard = (item, itemId) => {
 }
 
 const toggleCompleteItem = (itemId, isComplete) => {
-    firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({complete: !isComplete});
+    firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ complete: !isComplete });
     if (isComplete) {
         document.getElementById(`${itemId}-checkbox`).removeAttribute('checked');
     } else {
@@ -136,3 +161,22 @@ document.querySelector("#showCompleteToggle").addEventListener("click", () => {
         document.getElementById('showCompleteToggle').innerHTML = "Hide completed";
     }
 });
+
+function handleClientLoad() {
+    gapi.load('client:auth2', () => gapi.client.init({
+        apiKey: GAPI_API_KEY,
+        clientId: GAPI_CLIENT_ID,
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest"],
+        scope: "https://www.googleapis.com/auth/tasks"
+    }));
+}
+
+function ISODateString(d) {
+    function pad(n) { return n < 10 ? '0' + n : n }
+    return d.getUTCFullYear() + '-'
+        + pad(d.getUTCMonth() + 1) + '-'
+        + pad(d.getUTCDate()) + 'T'
+        + pad(d.getUTCHours()) + ':'
+        + pad(d.getUTCMinutes()) + ':'
+        + pad(d.getUTCSeconds()) + 'Z'
+}
