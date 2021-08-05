@@ -22,10 +22,10 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
 
 function toggleInputCard() {
     document.querySelector("#inputCard").classList.toggle("is-hidden");
-    document.querySelector("#inputCardToggle").disabled = !document.querySelector("#inputCardToggle").disabled;
 }
 
-document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard());
+document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard()); 
+document.querySelector("#addNoteButton").addEventListener("click", () => toggleInputCard());
 document.querySelector("#cancelButton").addEventListener("click", () => toggleInputCard());
 
 document.querySelector("#itemTitle").addEventListener("input", () => {
@@ -80,7 +80,8 @@ const getItems = (userId) => {
 }
 
 const renderDataAsHtml = (data) => {
-    console.log(data)
+    console.log(data);
+    document.querySelector("#counter").innerHTML = Object.values(data).filter(item => !item.complete).length;
     document.querySelector("#itemTable").innerHTML = '';
 
     for (id in data) {

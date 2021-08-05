@@ -4,12 +4,13 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>//TODO:</title>
+   <title>TODO:</title>
    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
    <link href="https://doc.mh-s.de/bulma-calendar/assets/css/bulma-calendar.min.css" rel="stylesheet">
    <link href="stylesheets/bulma-checkradio.min.css" rel="stylesheet">
+   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
    <!-- update the version number as needed -->
    <script defer src="/__/firebase/8.3.1/firebase-app.js"></script>
    <!-- include only the Firebase features as you need -->
@@ -35,20 +36,29 @@
 
 <body>
    <nav class="navbar" role="navigation" aria-label="main navigation">
+
       <div class="navbar-brand">
          <a class="navbar-item">
-            <h2 class="title is-2">
-               //TODO:
-            </h2>
+            <img src="slash.svg"> 
          </a>
+         <a class="navbar-item">
+            <h2>TODO:</h2>
+         </a>
+         <!--a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+            data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+         </a-->
       </div>
+
       <div class="navbar-menu">
          <a class="navbar-item">
          </a>
          <div class="navbar-end">
             <div class="navbar-item">
                <div class="buttons">
-                  <a id="logoutButton" class="button is-danger">
+                  <a id="logoutButton" class="button is-primary is-light is-small">
                      <strong>Sign Out</strong>
                   </a>
                </div>
@@ -68,7 +78,25 @@
          </div>
          <!-- NOTE FORM -->
          <div class="column is-three-quarters has-text-left">
-            <div class="title">Reminders</div>
+            <div class="level">
+               <div class="level-left">
+                  <div class="level-item">
+                     <div class="title has-text-primary-dark">Reminders</div>
+                  </div>
+               </div>
+
+               <div class="level-right">
+                  <div class="level-item">
+                     <div id="counter" class="title has-text-primary-dark">0</div>
+                  </div>
+                  <div class="level-item"></div>
+                  <div class="level-item">
+                     <button id="addNoteButton" class="button is-primary is-light">
+                        <div class="title has-text-primary-dark">+</div>
+                     </button>
+                  </div>
+               </div>
+            </div>
             <table class="table is-fullwidth">
                <tbody id="itemTable">
                   <!-- To do items inserted here -->
@@ -76,8 +104,7 @@
                <tfoot>
                   <tr>
                      <td>
-                        <button id="inputCardToggle" class="button is-danger is-light">Add item</button>
-                        <button id="showCompleteToggle" class="button is-danger is-light">Show completed</button>
+                        <button id="showCompleteToggle" class="button is-primary is-light">Show completed</button>
                         <div id="inputCard" class="card is-hidden">
                            <div class="card-content">
                               <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
@@ -87,7 +114,7 @@
                                  placeholder="Tags (separate with spaces)">
                               <input class="input bulmaCalendar" type="date">
                               <div class="buttons are-small">
-                                 <button id="submitButton" class="button is-danger is-light" disabled>Submit</button>
+                                 <button id="submitButton" class="button is-primary is-light" disabled>Submit</button>
                                  <button id="cancelButton" class="button">Cancel</button>
                               </div>
                            </div>
@@ -96,25 +123,19 @@
                   </tr>
                </tfoot>
             </table>
+
+            <a id="inputCardToggle">
+               <div class="content is-large has-text-centered">
+                  <h1 class="has-text-white">Add Item</h1>
+                  <h1 class="has-text-white">Add Item</h1>
+                  <h1 class="has-text-white">Add Item</h1>
+                  <h1 class="has-text-white">Add Item</h1>
+               </div>
+            </a>
+            
+
+            
          </div>
-      </div>
-   </div>
-   <div id="editNoteModal" class="modal">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-         <section class="modal-card-body">
-            Title:
-            <input class="input is-normal" id="editTitleInput" type="text">
-            Text:
-            <input class="input is-normal" id="editTextInput" type="text">
-            <input class="input is-hidden" id="editNoteId" type="text">
-         </section>
-         <footer class="modal-card-foot">
-            <button class="button is-success" onclick="saveEditedNote()">
-               Save changes
-            </button>
-            <button class="button" onclick="closedEditModal()">Cancel</button>
-         </footer>
       </div>
    </div>
    <script src="https://doc.mh-s.de/bulma-calendar/assets/js/bulma-calendar.min.js"></script>
