@@ -45,6 +45,12 @@ document.querySelector("#submitButton").addEventListener("click", () => {
         complete: false
     }
 
+    if (payload.tags.length === 0) {
+        payload.tags = [''];
+    }
+
+    console.log(payload)
+
     gapi.client.tasks.tasklists.list().then(res => {
         const taskListID = res.result.items[0].id;
 
@@ -83,34 +89,34 @@ const renderDataAsHtml = (data) => {
     console.log(data)
     document.querySelector("#itemTable").innerHTML = '';
 
-    for (id in data) {
-        document.querySelector("#itemTable").innerHTML = document.querySelector("#itemTable").innerHTML + createCard(data[id], id);
-        if (data[id].complete) {
-            document.getElementById(`${id}-checkbox`).setAttribute('checked', 'checked');
+    let sortedData = [];
+    for (const id in data) {
+        const item = data[id];
+        sortedData.push([item, id]);
+    }
+
+    sortedData.sort((a, b) => {
+        return a[0]['due'] > b[0]['due'];
+    });
+
+    sortedData.forEach((sortedElement) => {
+        document.querySelector("#itemTable").innerHTML = document.querySelector("#itemTable").innerHTML + createCard(sortedElement[0], sortedElement[1]);
+        if (sortedElement[0].complete) {
+            document.getElementById(`${sortedElement[1]}-checkbox`).setAttribute('checked', 'checked');
             if (!doNotHide) {
-                document.getElementById(`${id}`).classList.toggle("is-hidden");
+                document.getElementById(`${sortedElement[1]}`).classList.toggle("is-hidden");
             }
         }
-    }
+        if (!sortedElement[0].tags[0]) {
+            document.getElementById(`${sortedElement[1]}-tags`).classList.toggle("is-hidden");
+            document.getElementById(`${sortedElement[1]}-span`).classList.toggle("is-hidden");
+        }
+    });
 }
 
-const editTags = (itemId, tags) => {
-    document.querySelector(`#${itemId}-tags`).classList.add("is-hidden");
-    const tagsInput = document.querySelector(`#${itemId}-tagsInput`);
-    tagsInput.classList.remove("is-hidden");
-    tagsInput.addEventListener("change", () => {
-        const newTags = tagsInput.value.split(" ");
-        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({
-            tags: newTags.filter((c, index) => {
-                return newTags.indexOf(c) === index
-            }).filter(Boolean)
-        });
-    })
-}
-
-const editText = (itemId, title, text) => {
-    document.querySelector(`#${itemId}-title`).outerHTML = `<input id="${itemId}-title" class="input is-normal" type="text" value="${title}">`
-    document.querySelector(`#${itemId}-text`).outerHTML = `<input id="${itemId}-text" class="textarea is-small" type="text" value="${text}">`
+const editItem = (itemId, title, text) => {
+    document.querySelector(`#${itemId}-title`).outerHTML = `<input id="${itemId}-title" placeholder="Title (leave blank to delete item)" class="input is-normal" type="text" value="${title}">`
+    document.querySelector(`#${itemId}-text`).outerHTML = `<input id="${itemId}-text" placeholder="Details" class="textarea is-small" type="text" value="${text}">`
     let titleInput = document.querySelector(`#${itemId}-title`);
     let textInput = document.querySelector(`#${itemId}-text`);
 
@@ -123,43 +129,71 @@ const editText = (itemId, title, text) => {
     textInput.addEventListener("change", () => {
         firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ text: textInput.value });
     });
+
+    document.querySelector(`#${itemId}-tags`).classList.add("is-hidden");
+    document.querySelector(`#${itemId}-span`).classList.remove("is-hidden");
+    document.querySelector(`#${itemId}-tagsInput`).classList.remove("is-hidden");
+    const tagsInput = document.querySelector(`#${itemId}-tagsInput`);
+    tagsInput.classList.remove("is-hidden");
+    tagsInput.addEventListener("change", () => {
+        if (tagsInput.value === '') {
+            firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({
+                tags: ['']
+            });
+        }
+        else {
+            const newTags = tagsInput.value.split(" ");
+            firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({
+                tags: newTags.filter((c, index) => {
+                    return newTags.indexOf(c) === index
+                }).filter(Boolean)
+            });
+        }
+    });
 }
 
 const createCard = (item, itemId) => {
 
     let tagHTML = `
-    <input id="${itemId}-tagsInput" class="input is-small is-primary is-hidden" type="text" value="${item.tags.join(" ")}"> </input>
-    <div class="tags" id="${itemId}-tags">
+        <input id="${itemId}-tagsInput" class="input is-small is-hidden" type="text" placeholder="Tags (separate with spaces)" value="${item.tags.join(" ")}"> </input>
+        <div class="tags" id="${itemId}-tags">
     `;
 
     for (let tag in item.tags) {
-        tagHTML += `<span class="tag is-primary" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">${item.tags[tag]}</span>`
+        tagHTML += `<span id="${itemId}-span" class="tag is-primary" onclick="editItem('${itemId}', '${item.title}', '${item.text}')">${item.tags[tag]}</span>`
     }
 
     tagHTML += '</div>'
 
+    var date = getFormattedDate(new Date(item.due));
+
     return `
-    <tr id="${itemId}" class="item-card">
-        <td>
-            <div class="columns is-variable">
-                <div class="column is-narrow">
-                    <div class="field">
-                        <input class="is-checkradio is-large is-rtl" id="${itemId}-checkbox" type="checkbox" name="exampleCheckboxLarge" onclick="toggleCompleteItem('${itemId}', ${item.complete})">
-                        <label id="${itemId}-label" for="${itemId}-checkbox" style="margin-left: -10px; margin-right: -10px;"></label>
+        <tr id="${itemId}" class="item-card">
+            <td>
+                <div class="columns is-variable">
+                    <div class="column is-narrow">
+                        <div class="field">
+                            <input class="is-checkradio is-large is-rtl" id="${itemId}-checkbox" type="checkbox" onclick="toggleCompleteItem('${itemId}', ${item.complete})">
+                            <label id="${itemId}-label" for="${itemId}-checkbox" style="margin-left: -10px; margin-right: -10px;"></label>
+                        </div>
+                    </div>
+                    <div class="column has-text-left">
+                        <div id="${itemId}-title" class="title is-4" onclick="editItem('${itemId}', '${item.title}', '${item.text}')">
+                            ${item.title}
+                        </div>
+                        <div id="${itemId}-text" class="subtitle is-6" onclick="editItem('${itemId}', '${item.title}', '${item.text}')" style="margin-bottom:5px;">
+                            ${item.text}
+                        </div>
+                        ${tagHTML}
+                    </div>
+                    <div class="column is-narrow has-text-right">
+                        <div class="subtitle is-3">
+                            ${date}
+                        </div>
                     </div>
                 </div>
-                <div class="column has-text-left">
-                    <div id="${itemId}-title" class="title is-4" onclick="editText('${itemId}', '${item.title}', \`${item.text}\`)">
-                        ${item.title}
-                    </div>
-                    <div id="${itemId}-text" class="subtitle is-6" onclick="editText('${itemId}', '${item.title}', \`${item.text}\`)">
-                        ${item.text}
-                    </div>
-                    ${tagHTML}
-                </div>
-            </div>
-        </td>
-    </tr>
+            </td>
+        </tr>
     `;
 }
 
@@ -234,3 +268,15 @@ function ISODateString(d) {
         pad(d.getUTCMinutes()) + ':' +
         pad(d.getUTCSeconds()) + 'Z'
 }
+
+function getFormattedDate(date) {
+    var year = date.getFullYear();
+  
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+  
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+    
+    return month + '/' + day
+  }
