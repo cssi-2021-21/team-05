@@ -66,83 +66,86 @@
          </div>
       </div>
    </nav>
+
+   
+
    <!--section class="hero is-fullheight">
          <div class="hero-body"-->
    <div class="container has-text-centered">
-      <div class="columns is-8 is-variable ">
+      <div class="level">
+         <div class="level-left">
+            <div class="level-item">
+               <div class="title has-text-primary-dark">Your Tasks</div>
+            </div>
+         </div>
+
+         <div class="level-right">
+            <div class="level-item">
+               <div id="counter" class="title has-text-primary-dark">0</div>
+            </div>
+            <div class="level-item"></div>
+            <div class="level-item">
+               <button id="addNoteButton" class="button is-primary is-light"
+                  style="margin-right:10px; width:50px;">
+                  <div class="title has-text-primary-dark is-3" id="addNoteButtonText">+</div>
+               </button>
+            </div>
+         </div>
+      </div>
+
+      <div class="columns is-8 is-variable">
          <!-- WELCOME HERO -->
          <div class="column is-one-quarter has-text-left">
             <h1 class="subtitle is-5">
-               Sidebar stuff
+               <div class="has-text-primary-dark">Tags</div>
+               <table class="table is-fullwidth">
+                  <tbody id="tagTable">
+                     <!-- Tags inserted here -->
+                  </tbody>
+               </table>
             </h1>
          </div>
          <!-- NOTE FORM -->
          <div class="column is-three-quarters has-text-left">
-            <div class="level">
-               <div class="level-left">
-                  <div class="level-item">
-                     <div class="title has-text-primary-dark">Your Tasks</div>
-                  </div>
-               </div>
-
-               <div class="level-right">
-                  <div class="level-item">
-                     <div id="counter" class="title has-text-primary-dark">0</div>
-                  </div>
-                  <div class="level-item"></div>
-                  <div class="level-item">
-                     <button id="addNoteButton" class="button is-primary is-light"
-                        style="margin-right:10px; width:50px;">
-                        <div class="title has-text-primary-dark is-3" id="addNoteButtonText">+</div>
-                     </button>
-                  </div>
-               </div>
-            </div>
-
-            <div class="level">
-               <div class="level-left">
-                  <div class="level-item">
-                     <div id="completedCounter" class="has-text-grey">0 Completed</div>
-                  </div>
-                  <div class="level-item">
-                     <div class="has-text-grey">•</div>
-                  </div>
-                  <div class="level-item">
-                     <a>
-                        <div id="clearButton" class="has-text-primary-dark">Clear</div>
-                     </a>
-                  </div>
-               </div>
-
-               <div class="level-right">
-                  <div class="level-item">
-                     <a>
-                        <div id="showCompleteToggle" class="has-text-primary-dark">Show</div>
-                     </a>
-                  </div>
-               </div>
-            </div>
-
             <table class="table is-fullwidth">
                <thead>
-                  <tr>
-                     <td>
-                        <div id="inputCard" class="card is-hidden">
-                           <div class="card-content">
-                              <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
-                              <textarea id="itemDetails" class="textarea is-small" placeholder="Details"
-                                 rows="1"></textarea>
-                              <input id="itemTags" class="input is-small" type="text"
-                                 placeholder="Tags (separate with spaces)">
-                              <input class="input bulmaCalendar" type="date">
-                              <div class="buttons are-small">
-                                 <button id="submitButton" class="button is-primary is-light" disabled>Submit</button>
-                                 <button id="cancelButton" class="button">Cancel</button>
-                              </div>
-                           </div>
+                  <div id="inputCard" class="card is-hidden" style="margin-bottom:25px;">
+                     <div class="card-content">
+                        <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
+                        <textarea id="itemDetails" class="textarea is-small" placeholder="Details"
+                           rows="1"></textarea>
+                        <input id="itemTags" class="input is-small" type="text"
+                           placeholder="Tags (separate with spaces)">
+                        <input class="input bulmaCalendar" type="date">
+                        <div class="buttons are-small">
+                           <button id="submitButton" class="button is-primary is-light" disabled>Submit</button>
                         </div>
-                     </td>
-                  </tr>
+                     </div>
+                  </div>
+
+                  <div class="level">
+                     <div class="level-left">
+                        <div class="level-item">
+                           <div id="completedCounter" class="has-text-grey">0 Completed</div>
+                        </div>
+                        <div class="level-item">
+                           <div class="has-text-grey">•</div>
+                        </div>
+                        <div class="level-item">
+                           <a>
+                              <div id="clearButton" class="has-text-primary-dark">Clear</div>
+                           </a>
+                        </div>
+                     </div>
+            
+                     <div class="level-right">
+                        <div class="level-item">
+                           <a>
+                              <div id="showCompleteToggle" class="has-text-primary-dark">Show</div>
+                           </a>
+                        </div>
+                     </div>
+                  </div>
                </thead>
                <tbody id="itemTable">
                   <!-- To do items inserted here -->

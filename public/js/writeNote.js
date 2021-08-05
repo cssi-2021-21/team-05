@@ -27,7 +27,6 @@ function toggleInputCard() {
 
 document.querySelector("#inputCardToggle").addEventListener("click", () => toggleInputCard()); 
 document.querySelector("#addNoteButton").addEventListener("click", () => toggleInputCard());
-document.querySelector("#cancelButton").addEventListener("click", () => toggleInputCard());
 
 document.querySelector("#itemTitle").addEventListener("input", () => {
     document.querySelector("#submitButton").disabled = (document.querySelector("#itemTitle").value == false);
@@ -67,7 +66,6 @@ document.querySelector("#submitButton").addEventListener("click", () => {
             console.log(res.result.id)
             payload.googleCalendarId = res.result.id;
             firebase.database().ref(`/users/${googleUser.uid}`).push(payload).then(() => {
-                alert("Note Submitted.");
                 document.querySelector("#itemTitle").value = "";
                 document.querySelector("#itemDetails").value = "";
                 document.querySelector("#itemTags").value = "";
@@ -102,6 +100,8 @@ const renderDataAsHtml = (data) => {
         return a[0]['due'] > b[0]['due'];
     });
 
+    let tagsSet = new Set();
+
     sortedData.forEach((sortedElement) => {
         document.querySelector("#itemTable").innerHTML = document.querySelector("#itemTable").innerHTML + createCard(sortedElement[0], sortedElement[1]);
         if (sortedElement[0].complete) {
@@ -113,7 +113,19 @@ const renderDataAsHtml = (data) => {
         if (!sortedElement[0].tags[0]) {
             document.getElementById(`${sortedElement[1]}-tags`).classList.toggle("is-hidden");
             document.getElementById(`${sortedElement[1]}-span`).classList.toggle("is-hidden");
+        } else {
+            sortedElement[0].tags.forEach((tag) => {
+                tagsSet.add(tag);
+            });
         }
+
+        let tagsArr = Array.from(tagsSet);
+        tagsArr.sort();
+        console.log(tagsArr)
+        document.querySelector("#tagTable").innerHTML = '';
+        tagsArr.forEach((tag) => {
+            document.querySelector("#tagTable").innerHTML = document.querySelector("#tagTable").innerHTML + createTagCard(tag);
+        });
     });
 }
 
@@ -199,6 +211,29 @@ const createCard = (item, itemId) => {
         </tr>
     `;
 }
+
+const createTagCard = (tag) => {
+    return `
+        <tr id="${tag}" class="tag-card">
+            <td>
+                <div class="columns is-variable">
+                    <div class="column is-narrow">
+                        <div class="field">
+                            <input class="is-checkradio is-small is-rtl" id="${tag}-checkbox" type="checkbox">
+                            <label id="${tag}-label" for="${tag}-checkbox" style="margin-left: -10px; margin-right: -10px;"></label>
+                        </div>
+                    </div>
+                    <div class="column has-text-left">
+                        <div id="${tag}-title" class="subtitle is-6">
+                            ${tag}
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
 
 const toggleCompleteItem = (itemId, isComplete) => {
     ref = firebase.database().ref(`users/${googleUser.uid}/${itemId}`);
