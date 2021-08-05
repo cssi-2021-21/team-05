@@ -21,6 +21,7 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
 });
 
 function toggleInputCard() {
+    document.getElementById('addNoteButtonText').innerHTML = document.querySelector("#addNoteButtonText").innerHTML == "+" ? "-" : "+";
     document.querySelector("#inputCard").classList.toggle("is-hidden");
 }
 
