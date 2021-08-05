@@ -89,6 +89,7 @@ const getItems = (userId) => {
 const renderDataAsHtml = (data) => {
     console.log(data);
     document.querySelector("#counter").innerHTML = data ? Object.values(data).filter(item => !item.complete).length : 0; 
+    document.querySelector("#completedCounter").innerHTML = (data ? Object.values(data).filter(item => item.complete).length : 0) + " Completed"; 
     document.querySelector("#itemTable").innerHTML = '';
 
     let sortedData = [];
