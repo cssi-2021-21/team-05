@@ -87,7 +87,7 @@ const getItems = (userId) => {
 
 const renderDataAsHtml = (data) => {
     console.log(data);
-    document.querySelector("#counter").innerHTML = Object.values(data).filter(item => !item.complete).length;
+    document.querySelector("#counter").innerHTML = data ? Object.values(data).filter(item => !item.complete).length : 0; 
     document.querySelector("#itemTable").innerHTML = '';
 
     let sortedData = [];
@@ -156,7 +156,7 @@ const editItem = (itemId, title, text) => {
 const createCard = (item, itemId) => {
 
     let tagHTML = `
-        <input id="${itemId}-tagsInput" class="input is-small is-hidden" type="text" placeholder="Tags (separate with spaces)" value="${item.tags.join(" ")}"> </input>
+        <input id="${itemId}-tagsInput" class="input is-small is-hidden" type="text" placeholder="Tags (separate with spaces)" value="${item.tags ? item.tags.join(" ") : ""}"> </input>
         <div class="tags" id="${itemId}-tags">
     `;
 
@@ -237,7 +237,7 @@ document.querySelector("#showCompleteToggle").addEventListener("click", () => {
             }
         }
         doNotHide = false;
-        document.getElementById('showCompleteToggle').innerHTML = "Show completed";
+        document.getElementById('showCompleteToggle').innerHTML = "Show";
     } else {
         const cards = document.getElementsByClassName("item-card");
         for (let i = 0; i < cards.length; i++) {
@@ -245,7 +245,7 @@ document.querySelector("#showCompleteToggle").addEventListener("click", () => {
             element.classList.remove("is-hidden");
         }
         doNotHide = true;
-        document.getElementById('showCompleteToggle').innerHTML = "Hide completed";
+        document.getElementById('showCompleteToggle').innerHTML = "Hide";
     }
 });
 

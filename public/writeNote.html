@@ -39,7 +39,7 @@
 
       <div class="navbar-brand">
          <a class="navbar-item">
-            <img src="slash.svg"> 
+            <img src="slash.svg">
          </a>
          <a class="navbar-item">
             <h2>TODO:</h2>
@@ -97,6 +97,23 @@
                   </div>
                </div>
             </div>
+
+            <div class="level">
+               <div class="level-left">
+                  <div class="level-item">
+                     <div id="completedCounter" class="has-text-primary-dark">0 Completed</div>
+                  </div>
+               </div>
+
+               <div class="level-right">
+                  <div class="level-item">
+                     <a>
+                        <div id="showCompleteToggle" class="has-text-primary-dark">Show</div>
+                     </a>
+                  </div>
+               </div>
+            </div>
+
             <table class="table is-fullwidth">
                <tbody id="itemTable">
                   <!-- To do items inserted here -->
@@ -104,7 +121,6 @@
                <tfoot>
                   <tr>
                      <td>
-                        <button id="showCompleteToggle" class="button is-primary is-light">Show completed</button>
                         <div id="inputCard" class="card is-hidden">
                            <div class="card-content">
                               <input id="itemTitle" class="input is-normal" type="text" placeholder="Title">
@@ -132,9 +148,9 @@
                   <h1 class="has-text-white">Add Item</h1>
                </div>
             </a>
-            
 
-            
+
+
          </div>
       </div>
    </div>
