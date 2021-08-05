@@ -84,6 +84,18 @@ const getItems = (userId) => {
     });
 }
 
+document.querySelector("#clearButton").addEventListener("click", () => {
+    firebase.database().ref(`/users/${googleUser.uid}`).get().then((snapshot) => { 
+        const data = snapshot.val();
+        for (const id in data) {
+            const item = data[id];
+            if(item.complete){
+                firebase.database().ref(`users/${googleUser.uid}/${id}`).remove();
+            }
+        }
+    });
+});
+
 const renderDataAsHtml = (data) => {
     console.log(data);
     document.querySelector("#counter").innerHTML = data ? Object.values(data).filter(item => !item.complete).length : 0; 
