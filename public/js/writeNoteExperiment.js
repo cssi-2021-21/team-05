@@ -1,5 +1,6 @@
 let googleUser = null;
 let doNotHide = false;
+let googleCalendarCompletion = {};
 
 window.onload = () => {
     document.querySelector("#submitButton").disabled = true;
@@ -33,13 +34,10 @@ document.querySelector("#itemTitle").addEventListener("input", () => {
 });
 
 document.querySelector("#submitButton").addEventListener("click", () => {
-    const tags = document.querySelector("#itemTags").value.split(" ");
     let payload = {
         title: document.querySelector("#itemTitle").value,
         text: document.querySelector("#itemDetails").value,
-        tags: tags.filter((c, index) => {
-            return tags.indexOf(c) === index
-        }).filter(Boolean),
+        tags: document.querySelector("#itemTags").value.split(" "),
         due: selectedDate.getTime(),
         created: new Date(Date.now()).getTime(),
         complete: false
@@ -81,9 +79,18 @@ const getItems = (userId) => {
 
 const renderDataAsHtml = (data) => {
     console.log(data)
+    console.log('RRRRR', googleCalendarCompletion)
     document.querySelector("#itemTable").innerHTML = '';
-
+    
     for (id in data) {
+        console.log('XXXXXXXXXXX', data[id].googleCalendarId)
+        if (data[id].complete != googleCalendarCompletion[data[id].googleCalendarId]) {
+            console.log(`moving ${id} (${data[id].googleCalendarId}) from ${data[id].complete} to ${googleCalendarCompletion[data[id].googleCalendarId]}`)
+            console.log('LLLLLLLL', data[id].googleCalendarId, googleCalendarCompletion, Object.keys(googleCalendarCompletion), googleCalendarCompletion[data[id].googleCalendarId])
+            firebase.database().ref(`users/${googleUser.uid}/${id}`).update({
+                complete: googleCalendarCompletion[data[id].googleCalendarId]
+            });
+        }
         document.querySelector("#itemTable").innerHTML = document.querySelector("#itemTable").innerHTML + createCard(data[id], id);
         if (data[id].complete) {
             document.getElementById(`${id}-checkbox`).setAttribute('checked', 'checked');
@@ -92,48 +99,15 @@ const renderDataAsHtml = (data) => {
             }
         }
     }
-}
 
-const editTags = (itemId, tags) => {
-    document.querySelector(`#${itemId}-tags`).classList.add("is-hidden");
-    const tagsInput = document.querySelector(`#${itemId}-tagsInput`);
-    tagsInput.classList.remove("is-hidden");
-    tagsInput.addEventListener("change", () => {
-        const newTags = tagsInput.value.split(" ");
-        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({
-            tags: newTags.filter((c, index) => {
-                return newTags.indexOf(c) === index
-            }).filter(Boolean)
-        });
-    })
-}
-
-const editText = (itemId, title, text) => {
-    document.querySelector(`#${itemId}-title`).outerHTML = `<input id="${itemId}-title" class="input is-normal" type="text" value="${title}">`
-    document.querySelector(`#${itemId}-text`).outerHTML = `<input id="${itemId}-text" class="textarea is-small" type="text" value="${text}">`
-    let titleInput = document.querySelector(`#${itemId}-title`);
-    let textInput = document.querySelector(`#${itemId}-text`);
-
-    titleInput.addEventListener("change", () => {
-        const newTitle = titleInput.value;
-        if (!newTitle) firebase.database().ref(`users/${googleUser.uid}/${itemId}`).remove();
-        else firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ title: newTitle });
-    });
-
-    textInput.addEventListener("change", () => {
-        firebase.database().ref(`users/${googleUser.uid}/${itemId}`).update({ text: textInput.value });
-    });
 }
 
 const createCard = (item, itemId) => {
 
-    let tagHTML = `
-    <input id="${itemId}-tagsInput" class="input is-small is-primary is-hidden" type="text" value="${item.tags.join(" ")}"> </input>
-    <div class="tags" id="${itemId}-tags">
-    `;
+    let tagHTML = '<div class = "tags">';
 
-    for (let tag in item.tags) {
-        tagHTML += `<span class="tag is-primary" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">${item.tags[tag]}</span>`
+    for(let tag in item.tags){
+        tagHTML += `<span class="tag is-primary">${item.tags[tag]}</span>`
     }
 
     tagHTML += '</div>'
@@ -149,12 +123,13 @@ const createCard = (item, itemId) => {
                     </div>
                 </div>
                 <div class="column has-text-left">
-                    <div id="${itemId}-title" class="title is-4" onclick="editText('${itemId}', '${item.title}', \`${item.text}\`)">
+                    <div class="title is-4">
                         ${item.title}
                     </div>
-                    <div id="${itemId}-text" class="subtitle is-6" onclick="editText('${itemId}', '${item.title}', \`${item.text}\`)">
+                    <div class="subtitle is-6">
                         ${item.text}
                     </div>
+
                     ${tagHTML}
                 </div>
             </div>
@@ -174,12 +149,12 @@ const toggleCompleteItem = (itemId, isComplete) => {
     });
     gapi.client.tasks.tasklists.list().then(res => {
         const taskListID = res.result.items[0].id;
-
+        
         gapi.client.tasks.tasks.patch({
             'tasklist': taskListID,
             "task": googleCalendarId,
             'resource': {
-                'status': isComplete ? 'needsAction' : 'completed',
+                'status': isComplete ?  'needsAction' : 'completed',
             }
         }).then(res => console.log('RRRR', res));
     });
@@ -214,13 +189,26 @@ document.querySelector("#showCompleteToggle").addEventListener("click", () => {
     }
 });
 
-function handleClientLoad() {
-    gapi.load('client:auth2', () => gapi.client.init({
-        apiKey: GAPI_API_KEY,
-        clientId: GAPI_CLIENT_ID,
-        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest"],
-        scope: "https://www.googleapis.com/auth/tasks"
-    }));
+let handleClientLoad = () => {
+    gapi.load('client:auth2', () => {
+        gapi.client.init({
+            apiKey: GAPI_API_KEY,
+            clientId: GAPI_CLIENT_ID,
+            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/tasks/v1/rest"],
+            scope: "https://www.googleapis.com/auth/tasks"
+        }).then(() => {
+            gapi.client.tasks.tasklists.list().then(res => {
+                const taskListID = res.result.items[0].id;
+                gapi.client.tasks.tasks.list({
+                    'tasklist': taskListID
+                }).then(response => {
+                    response.result.items.forEach(item => {
+                        googleCalendarCompletion[item.id] = item.status == 'completed'
+                    });
+                });
+            });
+        });
+    });
 }
 
 function ISODateString(d) {
