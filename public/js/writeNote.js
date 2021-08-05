@@ -1,5 +1,6 @@
 let googleUser = null;
 let doNotHide = false;
+let enabledTags = new Set();
 
 window.onload = () => {
     document.querySelector("#submitButton").disabled = true;
@@ -181,8 +182,13 @@ const createCard = (item, itemId) => {
 
     var date = getFormattedDate(new Date(item.due));
 
+    let tags = ''
+    item.tags.forEach((tag) => {
+        tags += tag + ' ';
+    });
+
     return `
-        <tr id="${itemId}" class="item-card">
+        <tr id="${itemId}" class="item-card ${tags}">
             <td>
                 <div class="columns is-variable">
                     <div class="column is-narrow">
@@ -211,29 +217,6 @@ const createCard = (item, itemId) => {
     `;
 }
 
-const createTagCard = (tag) => {
-    return `
-        <tr id="${tag}" class="tag-card">
-            <td>
-                <div class="columns is-variable">
-                    <div class="column is-narrow">
-                        <div class="field">
-                            <input class="is-checkradio is-small is-rtl" id="${tag}-checkbox" type="checkbox">
-                            <label id="${tag}-label" for="${tag}-checkbox" style="margin-left: -10px; margin-right: -10px;"></label>
-                        </div>
-                    </div>
-                    <div class="column has-text-left">
-                        <div id="${tag}-title" class="subtitle is-6">
-                            ${tag}
-                        </div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    `;
-}
-
-
 const toggleCompleteItem = (itemId, isComplete) => {
     ref = firebase.database().ref(`users/${googleUser.uid}/${itemId}`);
     ref.update({
@@ -258,6 +241,61 @@ const toggleCompleteItem = (itemId, isComplete) => {
         document.getElementById(`${itemId}-checkbox`).removeAttribute('checked');
     } else {
         document.getElementById(`${itemId}-checkbox`).setAttribute('checked', 'checked');
+    }
+}
+
+const createTagCard = (tag) => {
+    return `
+        <tr id="${tag}" class="tag-card">
+            <td>
+                <div class="columns is-variable">
+                    <div class="column is-narrow">
+                        <div class="field">
+                            <input class="is-checkradio is-small is-rtl" id="${tag}-checkbox" type="checkbox" onclick="toggleTag('${tag}')">
+                            <label id="${tag}-label" for="${tag}-checkbox" style="margin-left: -10px; margin-right: -10px;"></label>
+                        </div>
+                    </div>
+                    <div class="column has-text-left">
+                        <div id="${tag}-title" class="subtitle is-6">
+                            ${tag}
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+const toggleTag = (tag) => {
+    if (enabledTags.has(tag)) {
+        enabledTags.delete(tag);
+    } else {
+        enabledTags.add(tag);
+    }
+
+    console.log(enabledTags);
+
+    if (enabledTags.size) {
+        document.getElementById("showCompleteToggle").classList.add("is-hidden");
+        const cardsAll = document.getElementsByClassName("item-card");
+        for (let i = 0; i < cardsAll.length; i++) {
+            let element = cardsAll.item(i);
+            element.classList.add("is-hidden");
+        }
+        enabledTags.forEach((curTag) => {
+            const cardsCur = document.getElementsByClassName(curTag);
+            for (let i = 0; i < cardsCur.length; i++) {
+                let element = cardsCur.item(i);
+                element.classList.remove("is-hidden");
+            }
+        });
+    } else {
+        document.getElementById("showCompleteToggle").classList.remove("is-hidden");
+        const cardsAll = document.getElementsByClassName("item-card");
+        for (let i = 0; i < cardsAll.length; i++) {
+            let element = cardsAll.item(i);
+            element.classList.remove("is-hidden");
+        }
     }
 }
 
