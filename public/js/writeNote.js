@@ -96,6 +96,7 @@ const renderDataAsHtml = (data) => {
 
 const editTags = (itemId, tags) => {
     document.querySelector(`#${itemId}-tags`).classList.add("is-hidden");
+    document.querySelector(`#${itemId}-tagsInput`).value = tags;
     const tagsInput = document.querySelector(`#${itemId}-tagsInput`);
     tagsInput.classList.remove("is-hidden");
     tagsInput.addEventListener("change", () => {
@@ -128,12 +129,12 @@ const editText = (itemId, title, text) => {
 const createCard = (item, itemId) => {
 
     let tagHTML = `
-    <input id="${itemId}-tagsInput" class="input is-small is-primary is-hidden" type="text" value="${item.tags.join(" ")}"> </input>
+    <input id="${itemId}-tagsInput" class="input is-small is-primary is-hidden" type="text"> </input>
     <div class="tags" id="${itemId}-tags">
     `;
 
     for (let tag in item.tags) {
-        tagHTML += `<span class="tag is-primary" onclick="editTags('${itemId}', '${item.tags.join(" ")}')">${item.tags[tag]}</span>`
+        tagHTML += `<span class="tag is-primary" onclick="editTags('${itemId}', '${item.tags ? "" : item.tags.join(" ")}')">${item.tags[tag]}</span>`
     }
 
     tagHTML += '</div>'
