@@ -21,6 +21,7 @@ document.querySelector("#logoutButton").addEventListener("click", () => {
 });
 
 function toggleInputCard() {
+    document.getElementById('addNoteButtonText').innerHTML = document.querySelector("#addNoteButtonText").innerHTML == "+" ? "-" : "+";
     document.querySelector("#inputCard").classList.toggle("is-hidden");
 }
 
@@ -237,7 +238,7 @@ document.querySelector("#showCompleteToggle").addEventListener("click", () => {
             }
         }
         doNotHide = false;
-        document.getElementById('showCompleteToggle').innerHTML = "Show completed";
+        document.getElementById('showCompleteToggleText').innerHTML = "✓";
     } else {
         const cards = document.getElementsByClassName("item-card");
         for (let i = 0; i < cards.length; i++) {
@@ -245,7 +246,7 @@ document.querySelector("#showCompleteToggle").addEventListener("click", () => {
             element.classList.remove("is-hidden");
         }
         doNotHide = true;
-        document.getElementById('showCompleteToggle').innerHTML = "Hide completed";
+        document.getElementById('showCompleteToggleText').innerHTML = "○";
     }
 });
 
